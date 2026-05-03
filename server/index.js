@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -8,6 +8,7 @@ const authRoutes = require('./modules/auth');
 const groupRoutes = require('./modules/groups');
 const expenseRoutes = require('./modules/expenses');
 const settlementRoutes = require('./modules/settlements');
+const balanceRoutes = require('./modules/balances');
 
 const app = express();
 const server = http.createServer(app);
@@ -25,6 +26,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/settlements', settlementRoutes);
+app.use('/api/balances', balanceRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
