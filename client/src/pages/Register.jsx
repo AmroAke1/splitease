@@ -18,7 +18,7 @@ export default function Register() {
       const { data } = await api.post('/auth/register', form);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed. Please try again.');
     } finally {
@@ -27,29 +27,36 @@ export default function Register() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h1 className="auth-title">SplitEase</h1>
-        <h2>Create your account</h2>
-        {error && <div className="error-message">{error}</div>}
-        <form onSubmit={handleSubmit} className="form">
+    <div className="auth-page">
+      <button onClick={() => navigate('/')} style={{ position: 'fixed', top: 16, left: 24, background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.875rem', color: '#757575', display: 'flex', alignItems: 'center', gap: 4 }}>
+        🏠 Home
+      </button>
+      <div className="card auth-card">
+        <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit', width: '100%' }}>
+          <div className="auth-logo">SplitEase</div>
+        </button>
+        <p className="auth-subtitle">Create your account — it&apos;s free</p>
+
+        {error && <div className="error-msg" style={{ marginBottom: 16 }}>{error}</div>}
+
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="name">Name</label>
+            <label>Full Name</label>
             <input
-              id="name"
+              className="form-control"
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder="Your full name"
+              placeholder="Your name"
               required
               autoFocus
             />
           </div>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label>Email</label>
             <input
-              id="email"
+              className="form-control"
               type="email"
               name="email"
               value={form.email}
@@ -59,9 +66,9 @@ export default function Register() {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label>Password</label>
             <input
-              id="password"
+              className="form-control"
               type="password"
               name="password"
               value={form.password}
@@ -71,11 +78,12 @@ export default function Register() {
               minLength={6}
             />
           </div>
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? 'Creating account...' : 'Create Account'}
+          <button type="submit" className="btn btn-green btn-full" style={{ marginTop: 4 }} disabled={loading}>
+            {loading ? 'Creating account…' : 'Create Account'}
           </button>
         </form>
-        <p className="auth-link">
+
+        <p className="auth-footer">
           Already have an account? <Link to="/login">Sign in</Link>
         </p>
       </div>

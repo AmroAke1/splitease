@@ -18,25 +18,32 @@ export default function Login() {
       const { data } = await api.post('/auth/login', form);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
+      setError(err.response?.data?.error || 'Invalid email or password.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h1 className="auth-title">SplitEase</h1>
-        <h2>Sign in to your account</h2>
-        {error && <div className="error-message">{error}</div>}
-        <form onSubmit={handleSubmit} className="form">
+    <div className="auth-page">
+      <button onClick={() => navigate('/')} style={{ position: 'fixed', top: 16, left: 24, background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.875rem', color: '#757575', display: 'flex', alignItems: 'center', gap: 4 }}>
+        🏠 Home
+      </button>
+      <div className="card auth-card">
+        <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit', width: '100%' }}>
+          <div className="auth-logo">SplitEase</div>
+        </button>
+        <p className="auth-subtitle">Welcome back — sign in to continue</p>
+
+        {error && <div className="error-msg" style={{ marginBottom: 16 }}>{error}</div>}
+
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label>Email</label>
             <input
-              id="email"
+              className="form-control"
               type="email"
               name="email"
               value={form.email}
@@ -47,9 +54,9 @@ export default function Login() {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label>Password</label>
             <input
-              id="password"
+              className="form-control"
               type="password"
               name="password"
               value={form.password}
@@ -58,11 +65,12 @@ export default function Login() {
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+          <button type="submit" className="btn btn-green btn-full" style={{ marginTop: 4 }} disabled={loading}>
+            {loading ? 'Signing in…' : 'Sign In'}
           </button>
         </form>
-        <p className="auth-link">
+
+        <p className="auth-footer">
           Don&apos;t have an account? <Link to="/register">Create one</Link>
         </p>
       </div>
