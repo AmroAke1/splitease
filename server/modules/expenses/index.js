@@ -5,7 +5,7 @@ const auth = require('../../middleware/auth');
 router.use(auth);
 
 router.post('/', async (req, res) => {
-  const { group_id, description, amount } = req.body;
+  const { group_id, description, amount, paid_by_name } = req.body;
   if (!group_id || !description || !amount) {
     return res.status(400).json({ error: 'group_id, description, and amount are required' });
   }
@@ -24,9 +24,9 @@ router.post('/', async (req, res) => {
     }
 
     const expenseResult = await client.query(
-      `INSERT INTO expenses (id, group_id, paid_by, description, amount, split_type, created_at)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4, 'equal', NOW()) RETURNING *`,
-      [group_id, req.user.id, description, amount]
+      `INSERT INTO expenses (id, group_id, paid_by, paid_by_name, description, amount, split_type, created_at)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, 'equal', NOW()) RETURNING *`,
+      [group_id, req.user.id, paid_by_name || null, description, amount]
     );
     const expense = expenseResult.rows[0];
 
@@ -107,9 +107,9 @@ router.post('/', async (req, res) => {
 router.get('/:groupId', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT e.*, u.name AS paid_by_name
+      `SELECT e.*, COALESCE(e.paid_by_name, u.name) AS paid_by_name
        FROM expenses e
-       JOIN users u ON e.paid_by = u.id
+       LEFT JOIN users u ON e.paid_by = u.id
        WHERE e.group_id = $1
        ORDER BY e.created_at DESC`,
       [req.params.groupId]

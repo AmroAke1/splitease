@@ -45,6 +45,7 @@ function AddExpenseModal({ groupId, members, onClose, onAdded }) {
         group_id: groupId,
         description: form.description,
         amount: parseFloat(form.amount),
+        paid_by_name: form.paid_by,
       });
       localStorage.setItem(`expense_paid_${data.id}`, form.paid_by);
       onAdded();

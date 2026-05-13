@@ -7,11 +7,12 @@ router.use(auth);
 router.get('/:groupId', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT b.id, b.group_id, b.owes_user_id, b.owed_user_id, b.amount, b.updated_at,
-              u1.name AS owes_name, u2.name AS owed_name
+      `SELECT b.*,
+              owes.name  AS owes_user_name,
+              owed.name  AS owed_user_name
        FROM balances b
-       JOIN users u1 ON b.owes_user_id = u1.id
-       JOIN users u2 ON b.owed_user_id = u2.id
+       JOIN users owes ON b.owes_user_id = owes.id
+       JOIN users owed ON b.owed_user_id = owed.id
        WHERE b.group_id = $1
        ORDER BY b.amount DESC`,
       [req.params.groupId]
